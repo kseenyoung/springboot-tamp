@@ -7,8 +7,16 @@ spring:
 
   datasource:
     platform: mysql
-    url: jdbc:mysql://forclass.c8ydsrovkrwj.ap-northeast-2.rds.amazonaws.com/test?autoReconnect=true # 변경해주세요
-    username:  # 변경해주세요
-    password:  # 변경해주세요
+    url: jdbc:mysql://netflix.cjm9rym2cdtv.ap-northeast-2.rds.amazonaws.com/netfilxDB?autoReconnect=true # 변경해주세요
+    username: ksy # 변경해주세요
+    password: Gintama1!! # 변경해주세요
     driver-class-name: com.mysql.cj.jdbc.Driver # mysql 8버전
-    # driver-class-name: com.mysql.jdbc.Driver # mysql 5버전
+  jpa: # 추가 해준 부분
+    database: mysql   
+    database-platform: org.hibernate.dialect.MySQL8Dialect 
+    hibernate:
+      ddl-auto: create  # 스키마 자동 생성
+    show-sql: true      # SQL 쿼리 출력
+    properties:
+      hibernate:
+        format_sql: true  # SQL pretty print
