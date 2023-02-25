@@ -4,6 +4,8 @@ com/example/demo/src/user/model/PostUserReq.java
  com.example.demo.src.user.model.PostUserReq
 com/example/demo/config/Constant.java
  com.example.demo.config.Constant
+com/example/demo/src/account/model/PatchAccountReq.java
+ com.example.demo.src.account.model.PatchAccountReq
 com/example/demo/utils/ValidationRegex.java
  com.example.demo.utils.ValidationRegex
 com/example/demo/src/user/model/PostLoginRes.java
@@ -22,6 +24,10 @@ com/example/demo/config/BaseResponseStatus.java
  com.example.demo.config.BaseResponseStatus
 com/example/demo/src/WebSecurityConfig.java
  com.example.demo.src.WebSecurityConfig
+com/example/demo/src/account/model/PostAccountReq.java
+ com.example.demo.src.account.model.PostAccountReq
+com/example/demo/src/account/model/PostLoginRes.java
+ com.example.demo.src.account.model.PostLoginRes
 com/example/demo/src/test/TestController.java
  com.example.demo.src.test.TestController
 com/example/demo/src/account/model/Account.java
@@ -30,8 +36,14 @@ com/example/demo/src/account/AccountProvider.java
  com.example.demo.src.account.AccountProvider
 com/example/demo/src/user/model/PostLoginReq.java
  com.example.demo.src.user.model.PostLoginReq
+com/example/demo/src/account/model/PostLoginReq.java
+ com.example.demo.src.account.model.PostLoginReq
+com/example/demo/src/account/model/PostAccountRes.java
+ com.example.demo.src.account.model.PostAccountRes
 com/example/demo/src/account/AccountService.java
  com.example.demo.src.account.AccountService
+com/example/demo/src/account/model/Profile.java
+ com.example.demo.src.account.model.Profile
 com/example/demo/config/secret/Secret.java
  com.example.demo.config.secret.Secret
 com/example/demo/src/user/UserController.java

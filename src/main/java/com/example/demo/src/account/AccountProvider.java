@@ -2,13 +2,13 @@ package com.example.demo.src.account;
 
 
 import com.example.demo.config.BaseException;
-import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.account.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,20 +31,20 @@ public class AccountProvider {
         this.jwtService = jwtService;
     }
 
-//    public List<GetAccountRes> getAccounts() throws BaseException{
-//        try{
-//            List<GetAccountRes> getAccountRes = accountDao.getAccounts();
-//            return getAccountRes;
-//        }
-//        catch (Exception exception) {
-//            logger.error("App - getAccountRes Provider Error", exception);
-//            throw new BaseException(DATABASE_ERROR);
-//        }
-//    }
+   public List<GetAccountRes> getAccounts() throws BaseException{
+       try{
+           List<GetAccountRes> getAccountRes = accountDao.getAccounts();
+           return getAccountRes;
+       }
+       catch (Exception exception) {
+           logger.error("App - getAccountRes Provider Error", exception);
+           throw new BaseException(DATABASE_ERROR);
+       }
+   }
 
-    public List<GetAccountRes> getAccountsByAccountId(int accountId) throws BaseException {
+    public GetAccountRes getAccountsByAccountInfo(String accountId, String accountEmail) throws BaseException {
         try {
-            List<GetAccountRes> getAccountsRes = accountDao.getAccountsByAccountId(accountId);
+            GetAccountRes getAccountsRes = accountDao.getAccountsByAccountInfo(accountId, accountEmail);
             return getAccountsRes;
         } catch (Exception exception) {
             logger.error("App - getAccountsByEmail Provider Error", exception);
@@ -62,39 +62,44 @@ public class AccountProvider {
 //            throw new BaseException(DATABASE_ERROR);
 //        }
 //    }
-//
-//    public int checkEmail(String email) throws BaseException{
-//        try{
-//            return AccountDao.checkEmail(email);
-//        } catch (Exception exception){
-//            logger.error("App - checkEmail Provider Error", exception);
-//            throw new BaseException(DATABASE_ERROR);
-//        }
-//    }
-//
-//    public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException {
-//        try {
-//            Account Account = AccountDao.getPwd(postLoginReq);
-//
-//            String encryptPwd;
-//            try {
-//                encryptPwd = new SHA256().encrypt(postLoginReq.getPassword());
-//            } catch (Exception exception) {
-//                logger.error("App - logIn Provider Encrypt Error", exception);
-//                throw new BaseException(PASSWORD_DECRYPTION_ERROR);
-//            }
-//
-//            if(Account.getPassword().equals(encryptPwd)){
-//                int AccountIdx = Account.getAccountIdx();
-//                String jwt = jwtService.createJwt(AccountIdx);
-//                return new PostLoginRes(AccountIdx,jwt);
-//            }
-//            else{
-//                throw new BaseException(FAILED_TO_LOGIN);
-//            }
-//        } catch (Exception exception) {
-//            logger.error("App - logIn Provider Error", exception);
-//            throw new BaseException(DATABASE_ERROR);
-//        }
-//    }
+
+   public int checkEmail(String email) throws BaseException{
+       try{
+           return accountDao.checkEmail(email);
+       } catch (Exception exception){
+           logger.error("App - checkEmail Provider Error", exception);
+           throw new BaseException(DATABASE_ERROR);
+       }
+   }
+
+   public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException {
+       try {
+    	Account account = accountDao.getPwd(postLoginReq); //이메일로 계정정보 가져옴
+		if(account.getAccountEmail() == null) throw new BaseException(FAILED_TO_LOGIN); //계정정보 없으면
+           String encryptPwd;
+           try {
+               encryptPwd = SHA256.encrypt(postLoginReq.getAccountPassword()); //비밀번호 암호화
+           } catch (Exception exception) {
+               logger.error("App - logIn Provider Encrypt Error", exception);
+               throw new BaseException(PASSWORD_DECRYPTION_ERROR);
+           }
+
+		//가져온 계정정보와 입력받은 암호비교
+		if(!account.getAccountPassword().equals(encryptPwd)) throw new BaseException(FAILED_TO_LOGIN);
+		//가입은했지만 결제정보가 없을때
+		if(account.getMembershipId() == 0) throw new BaseException(FAILED_TO_LOGIN);
+
+		int AccountIdx = account.getAccountId();
+		String jwt = jwtService.createJwt(AccountIdx);
+		
+		return new PostLoginRes(AccountIdx,jwt);
+       }catch(EmptyResultDataAccessException empex){
+		logger.error("조회된 아이디없음", empex);
+		throw new BaseException(FAILED_TO_LOGIN);
+	   }
+	   catch (Exception exception) {
+           logger.error("App - logIn Provider Error", exception);
+           throw new BaseException(DATABASE_ERROR);
+       }
+   }
 }

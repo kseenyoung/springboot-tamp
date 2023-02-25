@@ -32,41 +32,53 @@ public class AccountService {
     }
 
     // //POST
-    // public PostAccountRes createAccount(PostAccountReq postAccountReq) throws BaseException {
-    //     //중복
-    //     if(accountProvider.checkEmail(postAccountReq.getEmail()) ==1){
-    //         throw new BaseException(POST_USERS_EXISTS_EMAIL);
-    //     }
+    public PostLoginRes createAccount(PostAccountReq postAccountReq) throws BaseException {
+        //중복
+        if(accountProvider.checkEmail(postAccountReq.getAccountEmail()) == 1){
+            throw new BaseException(POST_USERS_EXISTS_EMAIL);
+        }
 
-    //     String pwd;
-    //     try{
-    //         //암호화
-    //         pwd = new SHA256().encrypt(postAccountReq.getPassword());
-    //         postAccountReq.setPassword(pwd);
+        String pwd;
+        try{
+            //암호화
+            pwd = SHA256.encrypt(postAccountReq.getAccountPassword());
+            postAccountReq.setAccountPassword(pwd);
 
-    //     } catch (Exception ignored) {
-    //         throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
-    //     }
-    //     try{
-    //         int accountIdx = accountDao.createAccount(postAccountReq);
-    //         //jwt 발급.
-    //         String jwt = jwtService.createJwt(accountIdx);
-    //         return new PostAccountRes(jwt,accountIdx);
-    //     } catch (Exception exception) {
-    //         logger.error("App - createAccount Service Error", exception);
-    //         throw new BaseException(DATABASE_ERROR);
-    //     }
-    // }
+        } catch (Exception ignored) {
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
+        }
+        try{
+            int accountIdx = accountDao.createAccount(postAccountReq);
+            //jwt 발급.
+            String jwt = jwtService.createJwt(accountIdx);
+            return new PostLoginRes(accountIdx, jwt);
+        } catch (Exception exception) {
+            logger.error("App - createAccount Service Error", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
-    // public void modifyAccountName(PatchAccountReq patchAccountReq) throws BaseException {
-    //     try{
-    //         int result = accountDao.modifyAccountName(patchAccountReq);
-    //         if(result == 0){
-    //             throw new BaseException(MODIFY_FAIL_USERNAME);
-    //         }
-    //     } catch(Exception exception){
-    //         logger.error("App - modifyAccountName Service Error", exception);
-    //         throw new BaseException(DATABASE_ERROR);
-    //     }
-    // }
+    public void modifyAccountMemberships(PatchAccountReq patchAccountReq) throws BaseException {
+        try{
+            int result = accountDao.modifyAccountMemberships(patchAccountReq);
+            if(result == 0){
+                throw new BaseException(MODIFY_FAIL_USERNAME);
+            }
+        } catch(Exception exception){
+            logger.error("App - modifyAccountName Service Error", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void modifyAccountPasswords(PatchAccountReq patchAccountReq) throws BaseException {
+        try{
+            int result = accountDao.modifyAccountPasswords(patchAccountReq);
+            if(result == 0){
+                throw new BaseException(MODIFY_FAIL_USERNAME);
+            }
+        } catch(Exception exception){
+            logger.error("App - modifyAccountName Service Error", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

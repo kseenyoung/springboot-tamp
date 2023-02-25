@@ -15,4 +15,7 @@ public class GetAccountRes {
     private String accountEmail;
     private String accountPassword;
     private int membershipId;
+    private String accountStatus;
+    private String status;
+    private String telephoneNumber;
 }
