@@ -1,0 +1,21 @@
+package com.example.demo.src.content.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class Content {
+    private int contentId;
+    private String explanation;
+    private String contentType;
+    private int ageLimitCode;
+    private String creationNational;
+    private String creationDate;
+    private int runningTime;
+    private String mainTitle;
+    private String contentUrl;
+    private int season;
+};

@@ -53,15 +53,27 @@ public class AccountProvider {
     }
 
 
-//    public GetAccountRes getAccount(int AccountIdx) throws BaseException {
-//        try {
-//            GetAccountRes getAccountRes = AccountDao.getAccount(AccountIdx);
-//            return getAccountRes;
-//        } catch (Exception exception) {
-//            logger.error("App - getAccount Provider Error", exception);
-//            throw new BaseException(DATABASE_ERROR);
-//        }
-//    }
+	public List<Profile> getProfiles(int accountId) throws BaseException{
+		try{
+			List<Profile> getAccountRes = accountDao.getProfiles(accountId);
+			return getAccountRes;
+		}
+		catch (Exception exception) {
+			logger.error("App - getProfiles Provider Error", exception);
+			throw new BaseException(DATABASE_ERROR);
+		}
+	}
+
+	public List<Payment> getPayments(int accountId) throws BaseException{
+		try{
+			List<Payment> getAccountRes = accountDao.getPayments(accountId);
+			return getAccountRes;
+		}
+		catch (Exception exception) {
+			logger.error("App - getPayments Provider Error", exception);
+			throw new BaseException(DATABASE_ERROR);
+		}
+	}
 
    public int checkEmail(String email) throws BaseException{
        try{

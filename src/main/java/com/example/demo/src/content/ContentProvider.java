@@ -31,4 +31,36 @@ public class ContentProvider {
         this.jwtService = jwtService;
     }
 
+    public GetContentRes getContentsByContentInfo(String contentId, String contentMainTitle) throws BaseException {
+        try {
+            GetContentRes getContentsRes = contentDao.getContentsByContentInfo(contentId, contentMainTitle);
+            return getContentsRes;
+        } catch (Exception exception) {
+            logger.error("App - getContentsByMainTitle Provider Error", exception);
+            throw new BaseException(DATABASE_ZERO_ACTUAL);
+        }
+    }
+
+    public List<GetContentRes> getContents()  throws BaseException{
+        try{
+            List<GetContentRes> getContentRes = contentDao.getContent();
+            return getContentRes;
+        }
+        catch (Exception exception) {
+            logger.error("App - getContentRes Provider Error", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // public List<GetSeriesCountRes> getSeriesCountByContentId(int contentId) throws BaseException {
+    //     try{
+    //         List<GetSeriesCountRes> getSeriesCountRes = contentDao.getSeriesCount();
+    //         return getSeriesCountRes;
+    //     }
+    //     catch (Exception exception){
+    //         logger.error("App - getContentRes Provider Error", exception);
+    //         throw new BaseException(DATABASE_ERROR);
+    //     }
+    // }
+
 }

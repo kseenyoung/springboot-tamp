@@ -33,6 +33,23 @@ public class AccountDao {
        		);
    }
 
+	public List<Profile> getProfiles(int accountId){
+		String getAccountsQuery = "select * from Profile where accountId = ?";
+		return this.jdbcTemplate.query(getAccountsQuery,
+				(rs,rowNum) -> new Profile(
+				rs.getInt("accountId"),
+				rs.getString("ageLimit"),
+				rs.getString("language"),
+				rs.getString("lockStatus"),
+				rs.getInt("profileId"),
+				rs.getString("status"),
+				rs.getString("profileImageUrl"),
+				rs.getString("profileName"),
+				rs.getInt("profilePassword")),
+				accountId
+			);
+	}
+
     public GetAccountRes getAccountsByAccountInfo(String accountId, String accountEmail){
 
         String getAccountQuery = "";
@@ -90,18 +107,25 @@ public class AccountDao {
    }
 
    public int modifyAccountPasswords(PatchAccountReq patchAccountReq){
-       String modifyAccountNameQuery = "update Account set accountPasswords = ? where accountId = ? ";
+       String modifyAccountNameQuery = "update Account set accountPassword = ? where accountId = ? ";
        Object[] modifyAccountNameParams = new Object[]{patchAccountReq.getAccountPassword(), patchAccountReq.getAccountId()};
 
        return this.jdbcTemplate.update(modifyAccountNameQuery,modifyAccountNameParams);
    }
 
-   public Account getPwd(PostLoginReq postLoginReq){
-       String getPwdQuery = "select accountId, accountEmail, accountPassword, membershipId, accountStatus, status, telephoneNumber from Account where accountEmail = ?";
-       String getPwdParams = postLoginReq.getAccountEmail();
+   public int modifyAccountStatus(Account account){
+       String modifyAccountNameQuery = "update Account set accountStatus = ? ,status = ? where accountEmail = ? and accountPassword = ? and accountId = ? ";
+       Object[] modifyAccountNameParams = new Object[]{"DELETE","DELETE", account.getAccountEmail(), account.getAccountPassword(), account.getAccountId()};
 
-       return this.jdbcTemplate.queryForObject(getPwdQuery,
-               (rs,rowNum)-> new Account(
+       return this.jdbcTemplate.update(modifyAccountNameQuery,modifyAccountNameParams);
+   }
+
+	public Account getPwd(PostLoginReq postLoginReq){
+		String getPwdQuery = "select accountId, accountEmail, accountPassword, membershipId, accountStatus, status, telephoneNumber from Account where accountEmail = ?";
+		String getPwdParams = postLoginReq.getAccountEmail();
+
+		return this.jdbcTemplate.queryForObject(getPwdQuery,
+				(rs,rowNum)-> new Account(
 				rs.getInt("accountId"),
 				rs.getString("accountEmail"),
 				rs.getString("accountPassword"),
@@ -109,10 +133,55 @@ public class AccountDao {
 				rs.getString("accountStatus"),
 				rs.getString("status"),
 				rs.getString("telephoneNumber")),
-               getPwdParams
-       );
+				getPwdParams
+		);
+	}
 
-   }
+   public int appendProfile(Profile profile){
+	String createAccountQuery = "insert into Profile (accountId, ageLimit, profileImageUrl, profileName, profilePassword) VALUES (?,?,?,?,?)";
+	Object[] createAccountParams = 
+	new Object[]{
+		profile.getAccountId(), 
+		profile.getAgeLimit(), 
+		profile.getProfileImageUrl(), 
+		profile.getProfileName(), 
+		profile.getProfilePassword(), 
+		};
 
+	this.jdbcTemplate.update(createAccountQuery, createAccountParams);
 
+	String lastInserIdQuery = "select last_insert_id()";
+	return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
+	}
+
+   public int appendPayment(Payment payment){
+	String createAccountQuery = "insert into PaymentCard (accountId, paymentCardType, standardCard, cardNumber, status) VALUES (?,?,?,?,?)";
+	Object[] createAccountParams = 
+	new Object[]{
+		payment.getAccountId(), 
+		payment.getPaymentCardType(), 
+		payment.getStandardCard(),
+		payment.getCardNumber(),
+		"ACTIVE"
+		};
+
+	this.jdbcTemplate.update(createAccountQuery, createAccountParams);
+
+	String lastInserIdQuery = "select last_insert_id()";
+	return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
+	}
+
+	public List<Payment> getPayments(int accountId){
+		String getAccountsQuery = "select * from PaymentCard where accountId = ?";
+		return this.jdbcTemplate.query(getAccountsQuery,
+				(rs,rowNum) -> new Payment(
+				rs.getInt("accountId"),
+				rs.getInt("paymentCardId"),
+				rs.getString("paymentCardType"),
+				rs.getString("standardCard"),
+				rs.getString("cardNumber"),
+				rs.getString("status")),
+				accountId
+			);
+	}
 }

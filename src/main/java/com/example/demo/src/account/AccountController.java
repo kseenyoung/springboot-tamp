@@ -7,8 +7,6 @@ import com.example.demo.config.BaseResponse;
 import com.example.demo.src.account.model.*;
 import com.example.demo.utils.JwtService;
 
-import net.bytebuddy.dynamic.loading.PackageDefinitionStrategy.Definition.Undefined;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -173,11 +171,9 @@ public class AccountController {
 			//jwt에서 idx 추출.
 			int userIdxByJwt = jwtService.getUserIdx();
 			//userIdx와 접근한 유저가 같은지 확인
-			if(accountId != userIdxByJwt){
-				return new BaseResponse<>(INVALID_USER_JWT);
-			}
-			//같다면 유저네임 변경
-			PatchAccountReq patchUserReq = new PatchAccountReq(accountId, "****", user.getMembershipId());
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+			
+			PatchAccountReq patchUserReq = new PatchAccountReq(accountId, "****", user.getMembershipId()); //멤버쉽 변경용 reqVO필요
 			accountService.modifyAccountMemberships(patchUserReq);
 
 			String result = "";
@@ -199,11 +195,9 @@ public class AccountController {
 			//jwt에서 idx 추출.
 			int userIdxByJwt = jwtService.getUserIdx();
 			//userIdx와 접근한 유저가 같은지 확인
-			if(accountId != userIdxByJwt){
-				return new BaseResponse<>(INVALID_USER_JWT);
-			}
-			//같다면 유저네임 변경
-			PatchAccountReq patchUserReq = new PatchAccountReq(accountId, "****", user.getMembershipId());
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+
+			PatchAccountReq patchUserReq = new PatchAccountReq(accountId, user.getAccountPassword(), user.getMembershipId()); //비밀번호 변경용 reqVO필요
 			accountService.modifyAccountPasswords(patchUserReq);
 
 			String result = "";
@@ -214,31 +208,123 @@ public class AccountController {
 	}
 
 
-	// /**
-	// * 계정 탈퇴 API
-	// * [PATCH] /account/:accountId/status
-	// * @return BaseResponse<String>
-	// */
-	// @ResponseBody
-	// @PatchMapping("/{accountId}/status")
-	// public BaseResponse<String> modifyAccountStatus(@PathVariable("accountId") int accountId, @RequestBody PostLoginReq postLoginReq){
-	// 	try {
-	// 		//jwt에서 idx 추출.
-	// 		int userIdxByJwt = jwtService.getUserIdx();
-	// 		//userIdx와 접근한 유저가 같은지 확인
-	// 		if(accountId != userIdxByJwt){
-	// 			return new BaseResponse<>(INVALID_USER_JWT);
-	// 		}
-	// 		//같다면 유저네임 변경
-	// 		PatchAccountReq patchUserReq = new PatchAccountReq(accountId, "****", user.getMembershipId());
-	// 		accountService.modifyAccountPasswords(patchUserReq);
+	/**
+	* 계정 탈퇴 API
+	* [POST] /accounts/:accountId/deactivate
+	* @return BaseResponse<String>
+	*/
+	@ResponseBody
+	@PostMapping("/{accountId}/deactivate")
+	public BaseResponse<String> modifyAccountStatus(@PathVariable("accountId") int accountId, @RequestBody Account req){
+		try {
+			//jwt에서 idx 추출.
+			int userIdxByJwt = jwtService.getUserIdx();
+			//userIdx와 접근한 유저가 같은지 확인
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+			
+			Account account = new Account(accountId, req.getAccountEmail(), req.getAccountPassword(), 0, "DEACTIVE","DEACTIVE",null);
 
-	// 		String result = "";
-	// 		return new BaseResponse<>(result);
-	// 	} catch (BaseException exception) {
-	// 		return new BaseResponse<>((exception.getStatus()));
-	// 	}
-	// }
+			accountService.modifyAccountStatus(account);
+
+			String result = "";
+			return new BaseResponse<>(result);
+		} catch (BaseException exception) {
+			return new BaseResponse<>((exception.getStatus()));
+		}
+	}
+
+    /**
+     * 특정 계정 프로필 조회 API
+     * [GET] /accounts/:accountId/profiles
+     * @return BaseResponse<List<GetAccountRes>>
+     */
+    //Query String
+    @ResponseBody
+    @GetMapping("/{accountId}/profiles")
+    public BaseResponse<List<Profile>> getProfiles(@PathVariable("accountId") int accountId) {
+        try {
+			//jwt에서 idx 추출.
+			int userIdxByJwt = jwtService.getUserIdx();
+			//userIdx와 접근한 유저가 같은지 확인
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+			
+			List<Profile> getAccountsRes = accountProvider.getProfiles(accountId);
+            return new BaseResponse<>(getAccountsRes);
+		} catch (BaseException exception) {
+			return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+
+    /**
+     * 특정 계정 프로필 등록 API
+     * [POST] /accounts/:accountId/profiles/append
+     * @return BaseResponse<List<GetAccountRes>>
+     */
+    //Query String
+    @ResponseBody
+    @PostMapping("/{accountId}/profiles/append")
+    public BaseResponse<String> appendProfile(@PathVariable("accountId") int accountId, @RequestBody Profile profile) {
+        try {
+			//jwt에서 idx 추출.
+			int userIdxByJwt = jwtService.getUserIdx();
+			//userIdx와 접근한 유저가 같은지 확인
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+			
+			accountService.appendProfile(accountId, profile);
+
+            String result = "";
+			return new BaseResponse<>(result);
+		} catch (BaseException exception) {
+			return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 특정 계정 결제정보 등록 API
+     * [POST] /accounts/:accountId/payments
+     * @return BaseResponse<String>
+     */
+    //Query String
+    @ResponseBody
+    @PostMapping("/{accountId}/payments")
+    public BaseResponse<String> appendPayment(@PathVariable("accountId") int accountId, @RequestBody Payment payment) {
+        try {
+			//jwt에서 idx 추출.
+			int userIdxByJwt = jwtService.getUserIdx();
+			//userIdx와 접근한 유저가 같은지 확인
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+			
+			accountService.appendPayment(accountId, payment);
+
+            String result = "";
+			return new BaseResponse<>(result);
+		} catch (BaseException exception) {
+			return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 특정 계정 결제정보 등록 API
+     * [GET] /accounts/:accountId/payments
+     * @return BaseResponse<String>
+     */
+    //Query String
+    @ResponseBody
+    @GetMapping("/{accountId}/payments")
+    public BaseResponse<List<Payment>> getPayments(@PathVariable("accountId") int accountId) {
+        try {
+			//jwt에서 idx 추출.
+			int userIdxByJwt = jwtService.getUserIdx();
+			//userIdx와 접근한 유저가 같은지 확인
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+			
+			List<Payment> getPaymentRes = accountProvider.getPayments(accountId);
+
+			return new BaseResponse<>(getPaymentRes);
+		} catch (BaseException exception) {
+			return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 }
-

@@ -1,7 +1,5 @@
 package com.example.demo.src.content;
 
-
-
 import com.example.demo.config.BaseException;
 import com.example.demo.src.content.model.*;
 import com.example.demo.utils.JwtService;
@@ -22,13 +20,24 @@ public class ContentService {
     private final ContentProvider contentProvider;
     private final JwtService jwtService;
 
-
     @Autowired
     public ContentService(ContentDao contentDao, ContentProvider contentProvider, JwtService jwtService) {
         this.contentDao = contentDao;
         this.contentProvider = contentProvider;
         this.jwtService = jwtService;
 
+    }
+
+    public void modifyContentStatus(PatchContentReq patchContentReq) throws BaseException {
+        try {
+            int result = contentDao.modifyContentStatus(patchContentReq);
+            if (result == 0) {
+                throw new BaseException(MODIFY_FAIL_USERNAME);
+            }
+        } catch (Exception exception) {
+            logger.error("App - modifyContentName Service Error", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
 }

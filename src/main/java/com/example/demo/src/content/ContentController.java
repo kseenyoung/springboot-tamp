@@ -48,13 +48,13 @@ public class ContentController {
     //Query String
     @ResponseBody
     @GetMapping("") // (GET) 127.0.0.1:9000/contents
-    public BaseResponse<List<GetContentRes>> getContents(@RequestParam(required = false) String contentId //아이디로 조회
-														 @RequestParam(required = false) String mainTitle //제목으로 조회
+    public BaseResponse<List<GetContentRes>> getContents(@RequestParam(required = false) String contentId, //아이디로 조회
+														 @RequestParam(required = false) String maintitle //제목으로 조회
 														 ) {
         try{
-            if(contentId != null || mainTitle != null){
+            if(contentId != null || maintitle != null){
 				List<GetContentRes> getContentsRes = new ArrayList<GetContentRes>();
-				GetContentRes getContent = contentProvider.getContentsByContentInfo(contentId, contentEmail);
+				GetContentRes getContent = contentProvider.getContentsByContentInfo(contentId, maintitle);
 				getContentsRes.add(getContent);
 				return new BaseResponse<>(getContentsRes);
 			}
@@ -65,6 +65,39 @@ public class ContentController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    	/**
+	* 계정 탈퇴 API
+	* [PATCH] /contents/:contentId/status
+	* @return BaseResponse<String>
+    	 * @throws BaseException
+	*/
+	@ResponseBody
+	@PatchMapping("/{contentId}/status")
+	public BaseResponse<String> modifyContentStatus(@PathVariable("contentId") int contentId) throws BaseException{
+        // status 상태 변경
+        PatchContentReq patchContentReq = new PatchContentReq(contentId, "DEACTIVE");
+        contentService.modifyContentStatus(patchContentReq);
+
+        String result = String.format("contentId %d is successfully deactive", contentId);
+        return new BaseResponse<>(result);
+	}
+
+
+    //     /**
+    //  * 시리즈 별 에피소드 개수 조회 API
+    //  * [GET] /contents/:contentId/episodes
+    //  * @return BaseResponse<List<GetContentRes>>
+    //  */
+    // //Query String
+    // @ResponseBody
+    // @GetMapping("/{contentId}/episodes") // (GET) 127.0.0.1:9000/contents/:contentId/episodes
+    // public BaseResponse<List<GetSeriesCountRes>> getSeriesCount(@PathVariable("contentId") int contentId) throws BaseException{
+	// 			List<GetSeriesCountRes> getSeriesCountRes = contentProvider.getSeriesCountByContentId(contentId);
+	// 			return new BaseResponse<>(getSeriesCountRes);
+	// 		}
+    //     }
+
 
 
 }
