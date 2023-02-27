@@ -34,7 +34,7 @@ public class AccountDao {
    }
 
 	public List<Profile> getProfiles(int accountId){
-		String getAccountsQuery = "select * from Profile where accountId = ?";
+		String getAccountsQuery = "select * from Profile where accountId = ? and status = 'ACTIVE'";
 		return this.jdbcTemplate.query(getAccountsQuery,
 				(rs,rowNum) -> new Profile(
 				rs.getInt("accountId"),
@@ -179,8 +179,8 @@ public class AccountDao {
 				rs.getInt("paymentCardId"),
 				rs.getString("paymentCardType"),
 				rs.getString("standardCard"),
-				rs.getString("cardNumber"),
-				rs.getString("status")),
+				rs.getString("status"),
+				rs.getString("cardNumber")),
 				accountId
 			);
 	}

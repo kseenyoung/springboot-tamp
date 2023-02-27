@@ -34,6 +34,8 @@ com/example/demo/src/account/model/PostLoginRes.java
  com.example.demo.src.account.model.PostLoginRes
 com/example/demo/src/test/TestController.java
  com.example.demo.src.test.TestController
+com/example/demo/src/content/model/GetSeriesCountRes.java
+ com.example.demo.src.content.model.GetSeriesCountRes
 com/example/demo/src/content/model/PatchContentReq.java
  com.example.demo.src.content.model.PatchContentReq
 com/example/demo/src/account/model/Account.java
@@ -70,14 +72,20 @@ com/example/demo/src/user/model/User.java
  com.example.demo.src.user.model.User
 com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
+com/example/demo/src/account/model/Payment.java
+ com.example.demo.src.account.model.Payment
 com/example/demo/src/content/model/GetContentRes.java
  com.example.demo.src.content.model.GetContentRes
 com/example/demo/src/user/model/GetUserRes.java
  com.example.demo.src.user.model.GetUserRes
+com/example/demo/src/account/model/Devices.java
+ com.example.demo.src.account.model.Devices
 com/example/demo/DemoApplication.java
  com.example.demo.DemoApplication
 com/example/demo/config/BaseException.java
  com.example.demo.config.BaseException
+com/example/demo/src/content/model/GetSeriesRes.java
+ com.example.demo.src.content.model.GetSeriesRes
 com/example/demo/utils/JwtService.java
  com.example.demo.utils.JwtService
 com/example/demo/src/user/UserProvider.java

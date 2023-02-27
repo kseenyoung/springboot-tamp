@@ -176,7 +176,7 @@ public class AccountController {
 			PatchAccountReq patchUserReq = new PatchAccountReq(accountId, "****", user.getMembershipId()); //멤버쉽 변경용 reqVO필요
 			accountService.modifyAccountMemberships(patchUserReq);
 
-			String result = "";
+			String result = "멤버십이 성공적으로 변경되었습니다";
 			return new BaseResponse<>(result);
 		} catch (BaseException exception) {
 			return new BaseResponse<>((exception.getStatus()));
@@ -200,7 +200,7 @@ public class AccountController {
 			PatchAccountReq patchUserReq = new PatchAccountReq(accountId, user.getAccountPassword(), user.getMembershipId()); //비밀번호 변경용 reqVO필요
 			accountService.modifyAccountPasswords(patchUserReq);
 
-			String result = "";
+			String result = "비밀번호가 성공적으로 변경되었습니다";
 			return new BaseResponse<>(result);
 		} catch (BaseException exception) {
 			return new BaseResponse<>((exception.getStatus()));
@@ -214,7 +214,7 @@ public class AccountController {
 	* @return BaseResponse<String>
 	*/
 	@ResponseBody
-	@PostMapping("/{accountId}/deactivate")
+	@PatchMapping("/{accountId}/deactivate")
 	public BaseResponse<String> modifyAccountStatus(@PathVariable("accountId") int accountId, @RequestBody Account req){
 		try {
 			//jwt에서 idx 추출.
@@ -222,11 +222,11 @@ public class AccountController {
 			//userIdx와 접근한 유저가 같은지 확인
 			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
 			
-			Account account = new Account(accountId, req.getAccountEmail(), req.getAccountPassword(), 0, "DEACTIVE","DEACTIVE",null);
+			Account account = new Account(accountId, req.getAccountEmail(), req.getAccountPassword(), 0, "DELETE","DELETE",null);
 
 			accountService.modifyAccountStatus(account);
 
-			String result = "";
+			String result = String.format("성공적으로 accountId : %d 를 삭제하였습니다.", accountId);
 			return new BaseResponse<>(result);
 		} catch (BaseException exception) {
 			return new BaseResponse<>((exception.getStatus()));
@@ -273,7 +273,7 @@ public class AccountController {
 			
 			accountService.appendProfile(accountId, profile);
 
-            String result = "";
+            String result = String.format("accountId : %d , profileName : %s 가 성공적으로 등록 되었습니다.", accountId, profile.getProfileName());
 			return new BaseResponse<>(result);
 		} catch (BaseException exception) {
 			return new BaseResponse<>((exception.getStatus()));
@@ -297,7 +297,7 @@ public class AccountController {
 			
 			accountService.appendPayment(accountId, payment);
 
-            String result = "";
+            String result = String.format("성공적으로 accountId : %d의 결제 정보 %s 를 추가했습니다.", accountId, payment.getCardNumber());
 			return new BaseResponse<>(result);
 		} catch (BaseException exception) {
 			return new BaseResponse<>((exception.getStatus()));
@@ -305,7 +305,7 @@ public class AccountController {
     }
 
     /**
-     * 특정 계정 결제정보 등록 API
+     * 특정 계정 결제정보 조회 API
      * [GET] /accounts/:accountId/payments
      * @return BaseResponse<String>
      */

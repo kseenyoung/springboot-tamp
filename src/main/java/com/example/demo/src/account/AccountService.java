@@ -88,7 +88,7 @@ public class AccountService {
 
     public void modifyAccountStatus(Account account) throws BaseException {
         try{
-            //암호화
+            // 암호화
             String pwd = SHA256.encrypt(account.getAccountPassword());
             account.setAccountPassword(pwd);
 
