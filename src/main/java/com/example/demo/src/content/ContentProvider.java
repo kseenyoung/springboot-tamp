@@ -52,15 +52,16 @@ public class ContentProvider {
         }
     }
 
-    // public List<GetSeriesCountRes> getSeriesCountByContentId(int contentId) throws BaseException {
-    //     try{
-    //         List<GetSeriesCountRes> getSeriesCountRes = contentDao.getSeriesCount();
-    //         return getSeriesCountRes;
-    //     }
-    //     catch (Exception exception){
-    //         logger.error("App - getContentRes Provider Error", exception);
-    //         throw new BaseException(DATABASE_ERROR);
-    //     }
-    // }
+
+    public GetSeriesCountRes getSeriesCountByContentInfo(String maintitle, int season) throws BaseException {
+        try{
+            GetSeriesCountRes getSeriesCountRes = contentDao.getSeriesCountByContentInfo(maintitle, season);
+            return getSeriesCountRes;
+        }
+        catch (Exception exception){
+            logger.error("App - getSeriesCountByContentInfo Provider Error", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
 }

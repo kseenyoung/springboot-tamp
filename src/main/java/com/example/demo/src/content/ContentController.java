@@ -50,7 +50,7 @@ public class ContentController {
     @GetMapping("") // (GET) 127.0.0.1:9000/contents
     public BaseResponse<List<GetContentRes>> getContents(@RequestParam(required = false) String contentId, //아이디로 조회
 														 @RequestParam(required = false) String maintitle //제목으로 조회
-														 ) {
+														) {
         try{
             if(contentId != null || maintitle != null){
 				List<GetContentRes> getContentsRes = new ArrayList<GetContentRes>();
@@ -84,19 +84,35 @@ public class ContentController {
 	}
 
 
-    //     /**
-    //  * 시리즈 별 에피소드 개수 조회 API
-    //  * [GET] /contents/:contentId/episodes
-    //  * @return BaseResponse<List<GetContentRes>>
-    //  */
-    // //Query String
-    // @ResponseBody
-    // @GetMapping("/{contentId}/episodes") // (GET) 127.0.0.1:9000/contents/:contentId/episodes
-    // public BaseResponse<List<GetSeriesCountRes>> getSeriesCount(@PathVariable("contentId") int contentId) throws BaseException{
-	// 			List<GetSeriesCountRes> getSeriesCountRes = contentProvider.getSeriesCountByContentId(contentId);
-	// 			return new BaseResponse<>(getSeriesCountRes);
-	// 		}
-    //     }
+        /**
+     * 시리즈 별 에피소드 개수 조회 API
+     * [GET] /contents/? contentId & episodes
+     * @return BaseResponse<List<GetContentRes>>
+     */
+    //Query String
+    @ResponseBody
+    @GetMapping("/{maintitles}/{season}") // (GET) 127.0.0.1:9000/contents/{maintitles}
+    public BaseResponse<List<GetSeriesCountRes>> getSeriesCount(@PathVariable("maintitles") String maintitle, @PathVariable("season") int season) throws BaseException{
+        try{
+            System.out.println("----------------------------");
+            if(season == 0 || maintitle == null){
+                return new BaseResponse<>(REQUEST_ERROR);
+            }
+			List<GetSeriesCountRes> getSeriesCountRes = new ArrayList<GetSeriesCountRes>();
+            GetSeriesCountRes getSeriesCount = contentProvider.getSeriesCountByContentInfo(maintitle, season);
+
+            getSeriesCountRes.add(getSeriesCount);
+			return new BaseResponse<>(getSeriesCountRes);
+			
+            // Get Contents - 전체 계정 조회
+			// List<GetContentRes> getContentsRes = contentProvider.getContents();
+            // return new BaseResponse<>(getContentsRes);
+        }
+        catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+	}
 
 
 

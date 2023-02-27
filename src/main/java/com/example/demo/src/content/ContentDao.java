@@ -42,10 +42,10 @@ public class ContentDao {
 		Object getContentsByContentParam = null;
 
 		if(contentId != null){
-			getContentQuery = "select * from Content where contentId = ? and status='ACTIVE'";
+			getContentQuery = "select * from Content where contentId = ? and status = \"ACTIVE\" ";
 			getContentsByContentParam = Integer.parseInt(contentId);
 		}else{
-			getContentQuery = "select * from Content where mainTitle like '%?%' and status = 'ACTIVE' Group by mainTitle";
+			getContentQuery = "select * from Content where mainTitle like \"%?%\" and status = \"ACTIVE\" Group by mainTitle";
 			getContentsByContentParam = contentMainTitle;
 		}
 
@@ -73,17 +73,21 @@ public class ContentDao {
         return this.jdbcTemplate.update(modifyContentStatusQuery,modifyContentStatusParams);
     }
 
-    // public List<GetSeriesCountRes> getSeriesCount() {
-    //     String getSeriesCountQuery = "SELECT * FROM CONTENT WHERE CONTENTID = ? GROUP BY ";
-	// 	Object getSeriesCountByContentParam = null;
 
-    //     return this.jdbcTemplate.queryForObject(getSeriesCountQuery, 
-    //             (rs, rowNum) -> new GetSeriesCountRes(
-    //                 rs.getInt("contntId"),
-    //                 rs.getString("contentType"),
-    //                 rs.getInt("season"),
-    //                 rs.getInt("seriesCount")
-    //             ), getSeriesCountByContentParam);
-    // }    }
+    public GetSeriesCountRes getSeriesCountByContentInfo(String maintitle, int season) {
+        String getSeriesCountQuery = "SELECT mainTitle, contentType, s.season, count(*) as seriesCount " +
+                                    "FROM Content c join Series s on c.contentId = s.contentId " +  
+                                    "WHERE CONTENTTYPE = \"series\" AND s.SEASON = ? and mainTitle = ? " + 
+                                    "GROUP BY mainTitle";
+		Object[] getSeriesCountByContentParam = new Object[]{season, maintitle};
+
+        return this.jdbcTemplate.queryForObject(getSeriesCountQuery, 
+                (rs, rowNum) -> new GetSeriesCountRes(
+                    rs.getString("mainTitle"),
+                    rs.getString("contentType"),
+                    rs.getInt("season")
+                    ,rs.getInt("seriesCount")
+                ), getSeriesCountByContentParam);
+    }    
 
 }

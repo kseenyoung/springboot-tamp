@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetSeriesCountRes {
-    private int contentId;
+    private String mainTitle;
     private String contentType;
     private int season;
     private int seriesCount;
-}
+};

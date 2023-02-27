@@ -64,52 +64,6 @@ public class AccountController {
         }
     }
 
-//    /**
-//     * 유저정보변경 API
-//     * [PATCH] /users/:userIdx
-//     * @return BaseResponse<String>
-//     */
-//    @ResponseBody
-//    @PatchMapping("/{accountId}")
-//    public BaseResponse<String> modifyUserName(@PathVariable("accountId") int accountId, @RequestBody Account account){
-//        try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getAccountId();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(accountId != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-//            //같다면 유저네임 변경
-//            PatchAccountReq patchUserReq = new PatchAccountReq(accountId,account.getAccountName());
-//            AccountService.modifyAccountName(patchAccountReq);
-
-//            String result = "";
-//            return new BaseResponse<>(result);
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>((exception.getStatus()));
-//        }
-//    }
-
-
-
-//    /**
-//     * 회원 1명 조회 API
-//     * [GET] /users/:userIdx
-//     * @return BaseResponse<GetUserRes>
-//     */
-//    // Path-variable
-//    @ResponseBody
-//    @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
-//    public BaseResponse<GetUserRes> getUser(@PathVariable("userIdx") int userIdx) {
-//        // Get Users
-//        try{
-//            GetUserRes getUserRes = userProvider.getUser(userIdx);
-//            return new BaseResponse<>(getUserRes);
-//        } catch(BaseException exception){
-//            return new BaseResponse<>((exception.getStatus()));
-//        }
-//
-//    }
 
    /**
     * 회원가입 API
