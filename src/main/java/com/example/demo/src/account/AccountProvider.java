@@ -75,6 +75,17 @@ public class AccountProvider {
 		}
 	}
 
+	public List<Devices> getDevices(int accountId) throws BaseException{
+		try{
+			List<Devices> getAccountRes = accountDao.getDevices(accountId);
+			return getAccountRes;
+		}
+		catch (Exception exception) {
+			logger.error("App - getDevices Provider Error", exception);
+			throw new BaseException(DATABASE_ERROR);
+		}
+	}
+
    public int checkEmail(String email) throws BaseException{
        try{
            return accountDao.checkEmail(email);

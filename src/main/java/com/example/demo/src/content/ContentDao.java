@@ -88,6 +88,26 @@ public class ContentDao {
                     rs.getInt("season")
                     ,rs.getInt("seriesCount")
                 ), getSeriesCountByContentParam);
+    }
+
+    public int getContentsByContentInfo(Content content) {
+        String postContentsQuery = "insert into Content (explanation, contentType, ageLimitCode, creationNational, creationDate, runningTime, mainTitle, contentUrl, season) values (?,?,?,?,?,?,?,?,?)";
+        Object[] postContentsParams = new Object[]{
+            content.getExplanation(),
+            content.getContentType(),
+            content.getAgeLimitCode(),
+            content.getCreationNational(),
+            content.getCreationDate(),
+            content.getRunningTime(),
+            content.getMainTitle(),
+            content.getContentUrl(),
+            content.getSeason()
+        };
+
+        this.jdbcTemplate.update(postContentsQuery, postContentsParams);
+
+        String lastInsertIdQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class);
     }    
 
 }

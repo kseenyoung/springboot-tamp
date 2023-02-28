@@ -35,6 +35,7 @@ public enum BaseResponseStatus {
     POST_USERS_EXISTS_EMAIL(false,2017,"중복된 이메일입니다."),
 
     // /contents
+    REQUEST_LACK(false, 2030, "추가하기에 정보가 부족합니다"),
     
 
 
@@ -62,7 +63,10 @@ public enum BaseResponseStatus {
     APPEND_FAIL_PROFILE(false,4015,"프로필 등록 실패"),
     
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
-    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다.");
+    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
+
+    //[POST] /contents
+    APPEND_FAIL_CONTENT(false, 4030, "콘텐츠 등록 실패");
     
 
 

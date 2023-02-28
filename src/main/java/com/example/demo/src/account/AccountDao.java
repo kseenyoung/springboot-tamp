@@ -154,21 +154,52 @@ public class AccountDao {
 	return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
 	}
 
-   public int appendPayment(Payment payment){
-	String createAccountQuery = "insert into PaymentCard (accountId, paymentCardType, standardCard, cardNumber, status) VALUES (?,?,?,?,?)";
-	Object[] createAccountParams = 
-	new Object[]{
-		payment.getAccountId(), 
-		payment.getPaymentCardType(), 
-		payment.getStandardCard(),
-		payment.getCardNumber(),
-		"ACTIVE"
-		};
+	public int appendPayment(Payment payment){
+		String createAccountQuery = "insert into PaymentCard (accountId, paymentCardType, standardCard, cardNumber, status) VALUES (?,?,?,?,?)";
+		Object[] createAccountParams = 
+		new Object[]{
+			payment.getAccountId(), 
+			payment.getPaymentCardType(), 
+			payment.getStandardCard(),
+			payment.getCardNumber(),
+			"ACTIVE"
+			};
 
-	this.jdbcTemplate.update(createAccountQuery, createAccountParams);
+		this.jdbcTemplate.update(createAccountQuery, createAccountParams);
 
-	String lastInserIdQuery = "select last_insert_id()";
+		String lastInserIdQuery = "select last_insert_id()";
 	return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
+	}
+
+	public int appendDevices(Devices devices){
+		String createAccountQuery = "insert into Device (accountId, profileId, deviceName, ipAddress, status) VALUES (?,?,?,?,?)";
+		Object[] createAccountParams = 
+		new Object[]{
+			devices.getAccountId(), 
+			devices.getProfileId(), 
+			devices.getDeviceName(),
+			devices.getIpAddress(),
+			"ACTIVE"
+			};
+
+		this.jdbcTemplate.update(createAccountQuery, createAccountParams);
+
+		String lastInserIdQuery = "select last_insert_id()";
+	return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
+	}
+
+	public int deactivateDevice(Devices devices){
+		String modifyAccountNameQuery = "update Device set status = 'DELETE',updateAt = now() where accountId = ? and deviceId = ?";
+       Object[] modifyAccountNameParams = new Object[]{devices.getAccountId(), devices.getDeviceId()};
+
+       return this.jdbcTemplate.update(modifyAccountNameQuery,modifyAccountNameParams);
+	}
+
+	public int updateDevice(Devices devices){
+		String modifyAccountNameQuery = "update Device set ipAddress = ?, loginTime = now(), updateAt = now() where accountId = ? and deviceId = ?";
+       Object[] modifyAccountNameParams = new Object[]{devices.getIpAddress(), devices.getAccountId(), devices.getDeviceId()};
+
+       return this.jdbcTemplate.update(modifyAccountNameQuery, modifyAccountNameParams);
 	}
 
 	public List<Payment> getPayments(int accountId){
@@ -181,6 +212,22 @@ public class AccountDao {
 				rs.getString("standardCard"),
 				rs.getString("status"),
 				rs.getString("cardNumber")),
+				accountId
+			);
+	}
+
+	public List<Devices> getDevices(int accountId){
+		String getAccountsQuery = "select * from Device where accountId = ?";
+		return this.jdbcTemplate.query(getAccountsQuery,
+				(rs,rowNum) -> new Devices(
+				rs.getInt("deviceId"),
+				rs.getInt("accountId"),
+				rs.getInt("profileId"),
+				rs.getString("deviceName"),
+				rs.getString("ipAddress"),
+				rs.getString("status"),
+				rs.getString("loginTime")
+				),
 				accountId
 			);
 	}

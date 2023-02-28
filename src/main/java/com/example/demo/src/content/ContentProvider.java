@@ -64,4 +64,28 @@ public class ContentProvider {
         }
     }
 
+    public void postContentsByContentInfo(Content req) throws BaseException {
+        try {
+            Content content = new Content(
+                0, //auto_increment
+                req.getExplanation(),
+                req.getContentType(),
+                req.getAgeLimitCode(), //19+, 청불, 12+, 7+, 전체관람가
+                req.getCreationNational(),
+                req.getCreationDate(),
+                req.getRunningTime(),
+                req.getMainTitle(),
+                req.getContentUrl(),
+                req.getSeason()
+            );
+
+            int result = contentDao.getContentsByContentInfo(content);
+            if(result == 0) throw new BaseException(APPEND_FAIL_CONTENT);
+
+        } catch (Exception exception) {
+            logger.error("App - getContentsByMainTitle Provider Error", exception);
+            throw new BaseException(DATABASE_ZERO_ACTUAL);
+        }
+    }
+
 }

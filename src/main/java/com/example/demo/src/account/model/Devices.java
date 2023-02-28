@@ -10,10 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Devices {
-private String deviceId;
-private String profileId;
-private String deviceName;
-private String loginTime;
-private String ipAddress;
-private String status;
+    private int deviceId;
+    private int accountId;
+    private int profileId;
+    private String deviceName;
+    private String ipAddress;
+    private String status;
+    private String loginTime;
 }

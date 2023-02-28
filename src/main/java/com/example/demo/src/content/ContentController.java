@@ -66,6 +66,35 @@ public class ContentController {
         }
     }
 
+            /**
+     * 영상 추가 API
+     * [GET] /contents
+     * 회원 번호 검색 조회 API
+     * [GET] /contents/? contentId=
+     * @return BaseResponse<List<GetContentRes>>
+     */
+    //Query String
+    @ResponseBody
+    @PostMapping("") // (GET) 127.0.0.1:9000/contents
+    public BaseResponse<String> postContents(@RequestBody Content content) {
+        try{
+            if(content.getContentType() != null && content.getAgeLimitCode() != null && content.getCreationNational() != null && 
+               content.getCreationDate() != null && content.getMainTitle() != null && content.getSeason() != 0){
+
+				contentProvider.postContentsByContentInfo(content);
+				
+                String result = String.format("성공적으로 %s 콘텐츠를 등록하였습니다.", content.getMainTitle());
+				return new BaseResponse<>(result);
+			}
+            else{
+                return new BaseResponse<>(REQUEST_LACK);
+            }
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
     	/**
 	* 계정 탈퇴 API
 	* [PATCH] /contents/:contentId/status
@@ -94,7 +123,7 @@ public class ContentController {
     @GetMapping("/{maintitles}/{season}") // (GET) 127.0.0.1:9000/contents/{maintitles}
     public BaseResponse<List<GetSeriesCountRes>> getSeriesCount(@PathVariable("maintitles") String maintitle, @PathVariable("season") int season) throws BaseException{
         try{
-            System.out.println("----------------------------");
+            // System.out.println("----------------------------");
             if(season == 0 || maintitle == null){
                 return new BaseResponse<>(REQUEST_ERROR);
             }
@@ -103,10 +132,6 @@ public class ContentController {
 
             getSeriesCountRes.add(getSeriesCount);
 			return new BaseResponse<>(getSeriesCountRes);
-			
-            // Get Contents - 전체 계정 조회
-			// List<GetContentRes> getContentsRes = contentProvider.getContents();
-            // return new BaseResponse<>(getContentsRes);
         }
         catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

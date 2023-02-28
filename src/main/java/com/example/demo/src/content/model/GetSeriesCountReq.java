@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetSeriesCountReq {
-    private int contentId;
     private String mainTitle;
     private int season;
 }

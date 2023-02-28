@@ -141,4 +141,52 @@ public class AccountService {
 			throw new BaseException(DATABASE_ERROR);
 		}
 	}
+
+	public void appendDevices(int accountId, int profileId, Devices req) throws BaseException {
+		try{
+			Devices devices = new Devices();
+			devices.setAccountId(accountId);
+			devices.setProfileId(profileId);
+			devices.setDeviceName(req.getDeviceName());
+			devices.setIpAddress(req.getIpAddress());
+
+			int result = accountDao.appendDevices(devices);
+			if(result == 0) throw new BaseException(APPEND_FAIL_PROFILE);
+			
+		} catch(Exception exception){
+			logger.error("App - appendDevices Service Error", exception);
+			throw new BaseException(DATABASE_ERROR);
+		}
+	}
+
+	public void deactivateDevice(int accountId, int deviceId, Devices req) throws BaseException {
+		try{
+			Devices devices = new Devices();
+			devices.setAccountId(accountId);
+			devices.setDeviceId(deviceId);
+
+			int result = accountDao.deactivateDevice(devices);
+			if(result == 0) throw new BaseException(APPEND_FAIL_PROFILE);
+			
+		} catch(Exception exception){
+			logger.error("App - deactivateDevice Service Error", exception);
+			throw new BaseException(DATABASE_ERROR);
+		}
+	}
+
+	public void updateDevice(int accountId, int deviceId, Devices req) throws BaseException {
+		try{
+			Devices devices = new Devices();
+			devices.setAccountId(accountId);
+			devices.setDeviceId(deviceId);
+			devices.setIpAddress(req.getIpAddress());
+
+			int result = accountDao.updateDevice(devices);
+			if(result == 0) throw new BaseException(APPEND_FAIL_PROFILE);
+			
+		} catch(Exception exception){
+			logger.error("App - deactivateDevice Service Error", exception);
+			throw new BaseException(DATABASE_ERROR);
+		}
+	}
 }

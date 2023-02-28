@@ -281,4 +281,97 @@ public class AccountController {
         }
     }
 
+    /**
+     * 기기정보 등록 API
+     * [POST] /accounts/:accountId/:profileId/devices
+     * @return BaseResponse<String>
+     */
+    //Query String
+    @ResponseBody
+    @PostMapping("/{accountId}/{profileId}/devices")
+    public BaseResponse<String> appendDevices(@PathVariable("accountId") int accountId, @PathVariable("profileId") int profileId, @RequestBody Devices device) {
+        try {
+			//jwt에서 idx 추출.
+			int userIdxByJwt = jwtService.getUserIdx();
+			//userIdx와 접근한 유저가 같은지 확인
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+			
+			accountService.appendDevices(accountId, profileId, device);
+
+            String result = String.format("성공적으로 accountId : %d의 기기 정보 %s 를 추가했습니다.", accountId, device.getDeviceName());
+			return new BaseResponse<>(result);
+		} catch (BaseException exception) {
+			return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+	/**
+	 * 기기정보 삭제 API
+	 * [POST] /accounts/:accountId/:deviceId/deactivate
+	 * @return BaseResponse<String>
+	 */
+	@ResponseBody
+	@PostMapping("/{accountId}/{deviceId}/deactivate")
+	public BaseResponse<String> deactivateDevice(@PathVariable("accountId") int accountId, @PathVariable("deviceId") int deviceId, @RequestBody Devices device) {
+		try {
+			//jwt에서 idx 추출.
+			int userIdxByJwt = jwtService.getUserIdx();
+			//userIdx와 접근한 유저가 같은지 확인
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+			
+			accountService.deactivateDevice(accountId, deviceId, device);
+
+			String result = String.format("성공적으로 accountId : %d의 기기 정보 %s 를 삭제했습니다.", accountId, device.getDeviceName());
+			return new BaseResponse<>(result);
+		} catch (BaseException exception) {
+			return new BaseResponse<>((exception.getStatus()));
+		}
+	}
+
+	/**
+	 * 기기정보 갱신 API
+	 * [POST] /accounts/:accountId/:deviceId
+	 * @return BaseResponse<String>
+	 */
+	@ResponseBody
+	@PatchMapping("/{accountId}/{deviceId}")
+	public BaseResponse<String> updateDevice(@PathVariable("accountId") int accountId, @PathVariable("deviceId") int deviceId, @RequestBody Devices device) {
+		try {
+			//jwt에서 idx 추출.
+			int userIdxByJwt = jwtService.getUserIdx();
+			//userIdx와 접근한 유저가 같은지 확인
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+			
+			accountService.updateDevice(accountId, deviceId, device);
+
+			String result = String.format("성공적으로 accountId : %d의 기기 정보 %s 를 수정했습니다.", accountId, device.getDeviceName());
+			return new BaseResponse<>(result);
+		} catch (BaseException exception) {
+			return new BaseResponse<>((exception.getStatus()));
+		}
+	}
+
+    /**
+     * 계정 기기목록 조회 API
+     * [GET] /accounts/:accountId/devices
+     * @return BaseResponse<String>
+     */
+    //Query String
+    @ResponseBody
+    @GetMapping("/{accountId}/devices")
+    public BaseResponse<List<Devices>> getDevices(@PathVariable("accountId") int accountId) {
+        try {
+			//jwt에서 idx 추출.
+			int userIdxByJwt = jwtService.getUserIdx();
+			//userIdx와 접근한 유저가 같은지 확인
+			if(accountId != userIdxByJwt) return new BaseResponse<>(INVALID_USER_JWT);
+			
+			List<Devices> getDeviceRes = accountProvider.getDevices(accountId);
+
+			return new BaseResponse<>(getDeviceRes);
+		} catch (BaseException exception) {
+			return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 }
