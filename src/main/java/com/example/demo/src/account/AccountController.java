@@ -113,6 +113,16 @@ public class AccountController {
     return true;
    }
 
+
+   @ResponseBody
+   @GetMapping("/oauth")
+   public void kakaoCallback(@RequestParam String code)throws BaseException{
+       
+		String access_Token = AccountService.getKaKaoAccessToken(code);  //static
+		AccountService.createKakaoUser(access_Token);  //static
+    }
+
+
 	/**
 	* 계정 멤버쉽 변경 API
 	* [PATCH] /account/:accountId/memberships
